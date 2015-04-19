@@ -12,7 +12,10 @@
                Mode="AerialWithLabels" x:Name="myMap"
                ZoomLevel="20" MouseDoubleClick="MapWithPushpins_MouseDoubleClick"  />
 
-        <Button Content="Button" Grid.Column="1" HorizontalAlignment="Left" Margin="82,51,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Button Content="Connect" Grid.Column="1" HorizontalAlignment="Left" Margin="154,114,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Button x:Name="testlog" Content="DumpToCom" Grid.Column="1" HorizontalAlignment="Left" Margin="50,199,0,0" VerticalAlignment="Top" Width="75" Click="testlog_Click"/>
+        <ComboBox x:Name="ports" Grid.Column="1" HorizontalAlignment="Left" Margin="5,114,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="ports_SelectionChanged"/>
+        <Button x:Name="disconnect" Content="Disconnect" Grid.Column="1" HorizontalAlignment="Left" Margin="154,141,0,0" VerticalAlignment="Top" Width="75" Click="disconnect_Click"/>
 
     </Grid>
 </Window>
