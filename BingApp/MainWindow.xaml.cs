@@ -49,6 +49,17 @@ namespace BingApp
             return  "cant return anything.";
         }
 
+          [JsonRpcMethod]
+        private void setPoints(double [] points)
+         {
+
+             Application.Current.Dispatcher.Invoke
+               (new Action(() => main.setPoints(points)));
+
+                
+
+         }
+
 
     }
     
@@ -62,6 +73,39 @@ namespace BingApp
         ExampleCalculatorService rpc;
         AsyncCallback rpcResultHandler = new AsyncCallback(_ => Console.WriteLine(((JsonRpcStateAsync)_).Result));
 
+        public void setPoints(double [] points)
+        {
+            int i = 0;
+            double p1=0, p2=0;
+
+            foreach (var item in points)
+            {
+               // Console.WriteLine("{0}", item);
+
+                if (i%2 == 0)
+                {
+                    p1 = item;
+                }
+                else
+                {
+                    p2 = item;
+
+                    Pushpin pin = new DraggablePin(myMap);
+                    pin.Location =new Location(p1, p2) ;
+
+                    // Adds the pushpin to the map.
+                    myMap.Children.Add(pin);
+                    myMap.Center = pin.Location;
+
+                    Console.WriteLine("{0} {1}", p1, p2);
+
+                }
+                
+                i++;
+
+            }
+        }
+
         public void getPoints()
         {
             string s="";
@@ -73,8 +117,10 @@ namespace BingApp
                     Pushpin pin = (Pushpin)v;
 
                     Console.WriteLine("{{{0}, {1}}}", pin.Location.Latitude, pin.Location.Longitude);
-                    //if (m_port.IsOpen)
-                    if(true)
+                 
+                    
+                    if (m_port.IsOpen)
+                   
                     {
 
 
@@ -82,7 +128,7 @@ namespace BingApp
                         s=s+",";
                         Console.WriteLine("{0}", s);
 
-                     //   m_port.WriteLine(s);
+                   
 
 
                     }
@@ -92,8 +138,9 @@ namespace BingApp
 
 
             Console.WriteLine("sending:");
-
-            Console.WriteLine('{'+s.TrimEnd(',')+'}');
+            s = '{' + s.TrimEnd(',') + '}';
+            Console.WriteLine(s);
+            m_port.WriteLine(s);
 
         }
 
@@ -124,9 +171,14 @@ namespace BingApp
         private void mySerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
-            string s = sp.ReadExisting();
-
-
+            string s = sp.ReadLine();
+            Console.WriteLine("Just read:{0}", s);
+            
+            var async = new JsonRpcStateAsync(rpcResultHandler, null);
+            // async.JsonRpc = "{'method':'add','params':[11,2],'id':1}";
+            //async.JsonRpc = "{'method':'getPoints','params':[],'id':2}";
+            async.JsonRpc = s;//  "{'method':'setPoints','params':[[40,-74, 40.11, -74.11]],'id':3}";
+            JsonRpcProcessor.Process(async);
 
 
             // next i want to display the data in s in a textbox. textbox1.text=s gives a cross thread exception
@@ -197,7 +249,8 @@ namespace BingApp
 //            Console.WriteLine(r.NAV_POSLLH.lat);
 
             openPort(m_selectedPort);
-            m_port.WriteLine("I am alive.\n");
+            Console.WriteLine("I am open:{0}.", m_selectedPort);
+
 
             
 
@@ -237,7 +290,8 @@ namespace BingApp
 
              var async = new JsonRpcStateAsync(rpcResultHandler, null);
             // async.JsonRpc = "{'method':'add','params':[11,2],'id':1}";
-             async.JsonRpc = "{'method':'getPoints','params':[],'id':2}";
+             //async.JsonRpc = "{'method':'getPoints','params':[],'id':2}";
+             async.JsonRpc = "{'method':'setPoints','params':[[40,-74, 40.11, -74.11]],'id':3}";
              JsonRpcProcessor.Process(async);
 
              return;
