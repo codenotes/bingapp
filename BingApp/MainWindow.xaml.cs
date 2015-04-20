@@ -41,8 +41,12 @@ namespace BingApp
          [JsonRpcMethod]
         private string getPoints()
         {
+          
+             //calls action on main thread. 
+            Application.Current.Dispatcher.Invoke
+                (new Action(   () => main.getPoints()  )  );
             // Application.Current.MainWindow
-            return  main.getPoints();
+            return  "cant return anything.";
         }
 
 
@@ -58,7 +62,7 @@ namespace BingApp
         ExampleCalculatorService rpc;
         AsyncCallback rpcResultHandler = new AsyncCallback(_ => Console.WriteLine(((JsonRpcStateAsync)_).Result));
 
-        public string getPoints()
+        public void getPoints()
         {
             string s="";
 
@@ -69,7 +73,8 @@ namespace BingApp
                     Pushpin pin = (Pushpin)v;
 
                     Console.WriteLine("{{{0}, {1}}}", pin.Location.Latitude, pin.Location.Longitude);
-                    if (m_port.IsOpen)
+                    //if (m_port.IsOpen)
+                    if(true)
                     {
 
 
@@ -84,7 +89,11 @@ namespace BingApp
 
                 }
             }
-            return "test";
+
+
+            Console.WriteLine("sending:");
+
+            Console.WriteLine('{'+s.TrimEnd(',')+'}');
 
         }
 
