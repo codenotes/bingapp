@@ -264,7 +264,15 @@ namespace BingApp
 
 
         }
+        int cnt = 0;
+        private void pin_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            var p = (Pushpin)sender;
 
+            Console.WriteLine("right {0}", p.Content);
+            myMap.Children.Remove(p);
+        }
          private void MapWithPushpins_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             // Disables the default mouse double-click action.
@@ -280,6 +288,8 @@ namespace BingApp
             // The pushpin to add to the map.
             Pushpin pin = new DraggablePin(myMap);
             pin.Location = pinLocation;
+            pin.Content = cnt++;
+            pin.MouseRightButtonDown += new MouseButtonEventHandler(pin_MouseDown);
             
             // Adds the pushpin to the map.
             myMap.Children.Add(pin);
