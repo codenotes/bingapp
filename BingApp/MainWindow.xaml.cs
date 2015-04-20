@@ -17,11 +17,36 @@ using DraggablePushpin;
 using Newtonsoft.Json;
 
 using System.IO.Ports;
+using AustinHarris.JsonRpc;
+
 
 namespace BingApp
 {
 
-    
+    public class ExampleCalculatorService : JsonRpcService
+    {
+        MainWindow main;
+
+        public void SetMain(MainWindow m)
+        {
+            main = m;
+        }
+
+        [JsonRpcMethod]
+        private double add(double l, double r)
+        {
+            return l + r;
+        }
+
+         [JsonRpcMethod]
+        private string getPoints()
+        {
+            // Application.Current.MainWindow
+            return  main.getPoints();
+        }
+
+
+    }
     
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -30,6 +55,38 @@ namespace BingApp
     {
         SerialPort m_port=new SerialPort();
         string m_selectedPort = "";
+        ExampleCalculatorService rpc;
+        AsyncCallback rpcResultHandler = new AsyncCallback(_ => Console.WriteLine(((JsonRpcStateAsync)_).Result));
+
+        public string getPoints()
+        {
+            string s="";
+
+            foreach (var v in myMap.Children)
+            {
+                if (v is Pushpin)
+                {
+                    Pushpin pin = (Pushpin)v;
+
+                    Console.WriteLine("{{{0}, {1}}}", pin.Location.Latitude, pin.Location.Longitude);
+                    if (m_port.IsOpen)
+                    {
+
+
+                        s = s+string.Format("{{{0}, {1}}}", pin.Location.Latitude, pin.Location.Longitude);
+                        s=s+",";
+                        Console.WriteLine("{0}", s);
+
+                     //   m_port.WriteLine(s);
+
+
+                    }
+
+                }
+            }
+            return "test";
+
+        }
 
         public List<string> GetAllPorts()
         {
@@ -59,6 +116,10 @@ namespace BingApp
         {
             SerialPort sp = (SerialPort)sender;
             string s = sp.ReadExisting();
+
+
+
+
             // next i want to display the data in s in a textbox. textbox1.text=s gives a cross thread exception
         }
 
@@ -78,6 +139,11 @@ namespace BingApp
         {
             InitializeComponent();
 
+            rpc = new ExampleCalculatorService();
+
+            rpc.SetMain(this);
+
+            
             GetAllPorts();
             var l = new Location();
             l.Latitude = 41.0913494;
@@ -159,27 +225,16 @@ namespace BingApp
 
          private void testlog_Click(object sender, RoutedEventArgs e)
          {
-             string s;
 
-             foreach (var v in myMap.Children)
-             {
-                 if(v is Pushpin)
-                 {
-                     Pushpin pin = (Pushpin)v;
+             var async = new JsonRpcStateAsync(rpcResultHandler, null);
+            // async.JsonRpc = "{'method':'add','params':[11,2],'id':1}";
+             async.JsonRpc = "{'method':'getPoints','params':[],'id':2}";
+             JsonRpcProcessor.Process(async);
 
-                    Console.WriteLine("{{{0}, {1}}}",pin.Location.Latitude, pin.Location.Longitude);
-                     if(m_port.IsOpen)
-                     {
+             return;
+             
 
-
-                         s=string.Format("{{{0}, {1}}}", pin.Location.Latitude, pin.Location.Longitude);
-                         m_port.WriteLine(s);
-
-
-                     }
-
-                 }
-             }
+        
          }
 
          private void ports_SelectionChanged(object sender, SelectionChangedEventArgs e)
