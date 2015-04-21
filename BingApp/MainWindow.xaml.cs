@@ -92,10 +92,12 @@ namespace BingApp
 
                     Pushpin pin = new DraggablePin(myMap);
                     pin.Location =new Location(p1, p2) ;
+                    pin.Content = cnt++;
 
                     // Adds the pushpin to the map.
                     myMap.Children.Add(pin);
                     myMap.Center = pin.Location;
+                    pin.MouseRightButtonDown += new MouseButtonEventHandler(pin_MouseDown);
 
                     Console.WriteLine("{0} {1}", p1, p2);
 
@@ -206,9 +208,16 @@ namespace BingApp
 
             
             GetAllPorts();
+
+            openPort("COM10"); //temp
+
             var l = new Location();
             l.Latitude = 41.0913494;
             l.Longitude = -74.1851234;
+
+            //DraggablePin pin = new DraggablePin(myMap);
+            //pin.Location = l;
+           // myMap.Children.Add(pin);
 
             //var l = Microsoft.Maps.MapControl.WPF.Location;
 
@@ -227,6 +236,7 @@ namespace BingApp
             //};
         }
 
+        //connect COM Port button
         private void Button_Click(object sender, RoutedEventArgs e)
         {
           //  Map.CenterProperty = "37.806029,-122.407007";
