@@ -17,6 +17,9 @@ using DraggablePushpin;
 using Newtonsoft.Json;
 
 using System.IO.Ports;
+using System.ServiceModel;
+
+
 
 namespace BingApp
 {
@@ -30,6 +33,8 @@ namespace BingApp
     {
         SerialPort m_port=new SerialPort();
         string m_selectedPort = "";
+        ServiceHost m_host;
+
 
         public List<string> GetAllPorts()
         {
@@ -77,6 +82,10 @@ namespace BingApp
         public MainWindow()
         {
             InitializeComponent();
+
+            m_host = new ServiceHost(typeof(Service1));
+
+            m_host.Open();
 
             GetAllPorts();
             var l = new Location();
