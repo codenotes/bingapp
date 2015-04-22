@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 
 using System.IO.Ports;
 using AustinHarris.JsonRpc;
+using System.Windows.Threading;
 
 
 namespace BingApp
@@ -41,11 +42,15 @@ namespace BingApp
          [JsonRpcMethod]
         private string getPoints()
         {
+            Dispatcher.BeginInvoke(() =>
+            {
+                // Update Your UI Here 
+            });
             // Application.Current.MainWindow
             return  main.getPoints();
         }
 
-
+         
     }
     
     /// <summary>
