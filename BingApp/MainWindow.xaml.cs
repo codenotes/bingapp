@@ -93,10 +93,12 @@ namespace BingApp
                     Pushpin pin = new DraggablePin(myMap);
                     pin.Location =new Location(p1, p2) ;
                     pin.Content = cnt++;
+                    pin.ToolTip = p1.ToString() + ":" + p2.ToString();
 
                     // Adds the pushpin to the map.
                     myMap.Children.Add(pin);
-                    myMap.Center = pin.Location;
+                  //  myMap.Center = pin.Location;
+                    
                     pin.MouseRightButtonDown += new MouseButtonEventHandler(pin_MouseDown);
 
                     Console.WriteLine("{0} {1}", p1, p2);
@@ -202,6 +204,10 @@ namespace BingApp
         {
             InitializeComponent();
 
+
+            ToolTipService.ShowDurationProperty.OverrideMetadata(
+    typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
+
             rpc = new ExampleCalculatorService();
 
             rpc.SetMain(this);
@@ -297,8 +303,10 @@ namespace BingApp
             
             // The pushpin to add to the map.
             Pushpin pin = new DraggablePin(myMap);
+            // pin.
             pin.Location = pinLocation;
             pin.Content = cnt++;
+            pin.ToolTip = pinLocation.ToString();
             pin.MouseRightButtonDown += new MouseButtonEventHandler(pin_MouseDown);
             
             // Adds the pushpin to the map.

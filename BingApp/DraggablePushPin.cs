@@ -47,6 +47,7 @@ namespace DraggablePushpin
                 var mouseMapPosition = e.GetTouchPoint(map);
                 var mouseGeocode = map.ViewportPointToLocation(mouseMapPosition.Position);
                 this.Location = mouseGeocode;
+                this.ToolTip = mouseGeocode.ToString();
             }
         }
 
@@ -84,6 +85,7 @@ namespace DraggablePushpin
                 var mouseMapPosition = e.GetPosition(map);
                 var mouseGeocode = map.ViewportPointToLocation(mouseMapPosition);
                 this.Location = mouseGeocode;
+                this.ToolTip = mouseGeocode.ToString();
             }
         }
         #endregion
