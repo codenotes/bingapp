@@ -73,6 +73,18 @@ namespace BingApp
         ExampleCalculatorService rpc;
         AsyncCallback rpcResultHandler = new AsyncCallback(_ => Console.WriteLine(((JsonRpcStateAsync)_).Result));
 
+        public void setPoints(Location l)
+        {
+
+            var d=new double[2];
+            d[0]=l.Latitude;
+            d[1]=l.Longitude;
+            setPoints(d);
+
+
+        }
+
+
         public void setPoints(double [] points)
         {
             int i = 0;
@@ -96,7 +108,7 @@ namespace BingApp
 
                     // Adds the pushpin to the map.
                     myMap.Children.Add(pin);
-                    myMap.Center = pin.Location;
+//                    myMap.Center = pin.Location;
                     pin.MouseRightButtonDown += new MouseButtonEventHandler(pin_MouseDown);
 
                     Console.WriteLine("{0} {1}", p1, p2);
@@ -297,7 +309,12 @@ namespace BingApp
             
             // The pushpin to add to the map.
             Pushpin pin = new DraggablePin(myMap);
-            pin.Location = pinLocation;
+
+            setPoints(pinLocation);
+
+            return;
+             //below is old stuff.
+             pin.Location = pinLocation;
             pin.Content = cnt++;
             pin.MouseRightButtonDown += new MouseButtonEventHandler(pin_MouseDown);
             
