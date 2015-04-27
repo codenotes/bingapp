@@ -38,6 +38,18 @@ namespace BingApp
             return l + r;
         }
 
+
+        [JsonRpcMethod]
+        private string getPointsIndex3()
+        {
+
+            //calls action on main thread. 
+            Application.Current.Dispatcher.Invoke
+                (new Action(() => main.getPoints(true)));
+            // Application.Current.MainWindow
+            return "cant return anything.";
+        }
+
          [JsonRpcMethod]
         private string getPoints()
         {
@@ -60,6 +72,18 @@ namespace BingApp
 
          }
 
+         [JsonRpcMethod]
+          private void setPointsIndex3(double[] points)
+          {
+
+              Application.Current.Dispatcher.Invoke
+                (new Action(() => main.setPointsIndex3(points)));
+
+
+
+          }
+
+
 
     }
     
@@ -76,14 +100,83 @@ namespace BingApp
         public void setPoints(Location l)
         {
 
-            var d=new double[2];
-            d[0]=l.Latitude;
-            d[1]=l.Longitude;
+            var d = new double[2];
+            d[0] = l.Latitude;
+            d[1] = l.Longitude;
             setPoints(d);
 
 
         }
 
+        //first of every 3 is an index
+        public void setPointsIndex3(double [] points)
+        {
+            //this is all wrong
+            int i = 0;
+            double p1 = 0, p2 = 0;
+            int mod=0;
+            int index=0;
+
+            foreach (var item in points)
+            {
+                // Console.WriteLine("{0}", item);
+
+                mod = i % 3;
+                if (mod == 0)
+                {
+                    index = (int)item;
+                    Console.WriteLine("index {0}", item);
+                    
+                }
+                else if (mod == 1)
+                {
+                    p1 = item;
+                    Console.WriteLine("p1:{0}", item);
+                    //       placePin(p1, p2);
+                    //     Console.WriteLine("{0} {1}", p1, p2);
+
+                }
+                else
+                {
+                    p2 = item;
+                    Console.WriteLine("p2:{0}", item);
+                    Console.WriteLine("@place in {0} with lat {1} and long {2}", index, p1, p2);
+                    placePin(p1, p2, index);
+                }
+
+                i++;
+
+
+            }
+
+
+        }
+
+
+        void placePin(double p1, double p2, int index=-1)
+        {
+            
+                Pushpin pin = new DraggablePin(myMap);
+                pin.Location =new Location(p1, p2) ;
+                if(index<0)
+                {
+                        pin.Content = cnt++;
+                }
+                else
+                {
+                        pin.Content = index;
+                }
+            
+            
+            pin.ToolTip = p1.ToString() + ":" + p2.ToString();
+
+                    // Adds the pushpin to the map.
+                    myMap.Children.Add(pin);
+                  //  myMap.Center = pin.Location;
+                    
+                    pin.MouseRightButtonDown += new MouseButtonEventHandler(pin_MouseDown);
+
+        }
 
         public void setPoints(double [] points)
         {
@@ -102,15 +195,7 @@ namespace BingApp
                 {
                     p2 = item;
 
-                    Pushpin pin = new DraggablePin(myMap);
-                    pin.Location =new Location(p1, p2) ;
-                    pin.Content = cnt++;
-
-                    // Adds the pushpin to the map.
-                    myMap.Children.Add(pin);
-//                    myMap.Center = pin.Location;
-                    pin.MouseRightButtonDown += new MouseButtonEventHandler(pin_MouseDown);
-
+                    placePin(p1, p2);
                     Console.WriteLine("{0} {1}", p1, p2);
 
                 }
@@ -120,7 +205,7 @@ namespace BingApp
             }
         }
 
-        public void getPoints()
+        public void getPoints(bool withIndex=false)
         {
             string s="";
 
@@ -130,7 +215,7 @@ namespace BingApp
                 {
                     Pushpin pin = (Pushpin)v;
 
-                    Console.WriteLine("{{{0}, {1}}}", pin.Location.Latitude, pin.Location.Longitude);
+                    Console.WriteLine("{{{0}, {1}, {2}}}", pin.Content, pin.Location.Latitude, pin.Location.Longitude);
                  
                     
                     if (m_port.IsOpen)
@@ -138,7 +223,7 @@ namespace BingApp
                     {
 
 
-                        s = s+string.Format("{{{0}, {1}}}", pin.Location.Latitude, pin.Location.Longitude);
+                        s = s+string.Format("{{{0}, {1}, {2}}}",pin.Content, pin.Location.Latitude, pin.Location.Longitude);
                         s=s+",";
                         Console.WriteLine("{0}", s);
 
@@ -213,6 +298,10 @@ namespace BingApp
         public MainWindow()
         {
             InitializeComponent();
+
+
+            ToolTipService.ShowDurationProperty.OverrideMetadata(
+    typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
 
             rpc = new ExampleCalculatorService();
 
@@ -306,16 +395,16 @@ namespace BingApp
             Point mousePosition = e.GetPosition(this);
             //Convert the mouse coordinates to a locatoin on the map
             Location pinLocation = myMap.ViewportPointToLocation(mousePosition);
-            
-            // The pushpin to add to the map.
-            Pushpin pin = new DraggablePin(myMap);
 
             setPoints(pinLocation);
 
             return;
-             //below is old stuff.
-             pin.Location = pinLocation;
+            // The pushpin to add to the map.
+            Pushpin pin = new DraggablePin(myMap);
+            // pin.
+            pin.Location = pinLocation;
             pin.Content = cnt++;
+            pin.ToolTip = pinLocation.ToString();
             pin.MouseRightButtonDown += new MouseButtonEventHandler(pin_MouseDown);
             
             // Adds the pushpin to the map.
