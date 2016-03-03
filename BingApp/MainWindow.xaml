@@ -8,7 +8,7 @@
             <ColumnDefinition Width="384*"/>
             <ColumnDefinition Width="133*"/>
         </Grid.ColumnDefinitions>
-        <m:Map CredentialsProvider="AtRZsoEvyVViuobv1irM8i_sScj3F2Pb0yVWXnnjivD2aRStL35XIxxesx148W0N" 
+        <m:Map CredentialsProvider="JuiA3DvOWPsM1Rxlo0i6~QebF2Ai1yfI3FvoFjukd8w~AnqEL4XEHhsJneXQneCx3zbeAM548aV5Lu8_cMrKmZ0iajXjMZfWKvo7B6RqfKpO" 
                Mode="AerialWithLabels" x:Name="myMap"
                ZoomLevel="20" MouseDoubleClick="MapWithPushpins_MouseDoubleClick"  />
 

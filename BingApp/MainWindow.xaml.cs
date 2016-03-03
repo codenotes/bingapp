@@ -309,8 +309,14 @@ namespace BingApp
 
             
             GetAllPorts();
-
+            try
+            { 
             openPort("COM10"); //temp
+            }
+            catch
+            {
+
+            }
 
             var l = new Location();
             l.Latitude = 41.0913494;
